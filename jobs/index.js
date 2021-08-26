@@ -1,10 +1,10 @@
 module.exports = [
   {
     name: 'find',
-    interval: '15s'
+    interval: '5m'
   },
   {
     name: 'process',
-    interval: '30s'
+    interval: '60s'
   },
 ]
