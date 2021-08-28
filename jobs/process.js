@@ -22,7 +22,7 @@ async function process() {
     await ProcessEvents();
   } catch (err) {
     // catch the error so if one email fails they all don't fail
-    console.log(reason)
+    console.log(err)
     // cabin.error(err);
   }
 }
