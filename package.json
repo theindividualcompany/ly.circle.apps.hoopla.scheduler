@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "NODE_ENV=development nodemon bree.js",
-    "start": "node bree.js"
+    "start": "node bree.js",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@ladjs/graceful": "^1.0.5",
