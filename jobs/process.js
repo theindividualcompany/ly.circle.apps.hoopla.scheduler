@@ -23,7 +23,7 @@ async function process(prisma) {
     await ProcessEvents(prisma);
   } catch (err) {
     // catch the error so if one email fails they all don't fail
-    console.log(err)
+    console.log(err);
     // cabin.error(err);
   }
 }
@@ -49,7 +49,9 @@ if (parentPort) {
     if (parentPort) parentPort.postMessage("done");
     else process.exit(0);
   } catch (reason) {
-    console.log(reason)
+    console.log(reason);
     // cabin.error(reason);
+  } finally {
+    await prisma.$disconnect();
   }
 })();
