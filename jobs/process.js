@@ -2,6 +2,7 @@ const os = require("os");
 const { parentPort } = require("worker_threads");
 const Cabin = require("cabin");
 const ProcessEvents = require("../lib/process");
+const prisma = require("../lib/db");
 //
 // we recommend using Cabin as it is security-focused
 // and you can easily hook in Slack webhooks and more
@@ -15,11 +16,11 @@ let isCancelled = false;
 // how many emails to send at once
 const concurrency = os.cpus().length || 1;
 
-async function process() {
+async function process(prisma) {
   // return early if the job was already cancelled
   if (isCancelled) return;
   try {
-    await ProcessEvents();
+    await ProcessEvents(prisma);
   } catch (err) {
     // catch the error so if one email fails they all don't fail
     console.log(err)
@@ -42,7 +43,7 @@ if (parentPort) {
 (async () => {
   try {
     console.log("processing reminders");
-    await process();
+    await process(prisma);
 
     // signal to parent that the job is done
     if (parentPort) parentPort.postMessage("done");

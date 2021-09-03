@@ -2,6 +2,7 @@ const os = require("os");
 const { parentPort } = require("worker_threads");
 const Cabin = require("cabin");
 const FindEvents = require("../lib/find");
+const prisma = require("../lib/db");
 // we recommend using Cabin as it is security-focused
 // and you can easily hook in Slack webhooks and more
 // <https://cabinjs.com>
@@ -12,11 +13,11 @@ const FindEvents = require("../lib/find");
 let isCancelled = false;
 
 const concurrency = os.cpus().length || 1;
-async function find() {
+async function find(prisma) {
   // return early if the job was already cancelled
   if (isCancelled) return;
   try {
-    await FindEvents();
+    await FindEvents(prisma);
   } catch (err) {
     // catch the error so if one email fails they all don't fail
     console.log(err);
@@ -39,7 +40,7 @@ if (parentPort) {
 (async () => {
   try {
     console.log("finding events");
-    await find();
+    await find(prisma);
 
     // signal to parent that the job is done
     if (parentPort) parentPort.postMessage("done");
@@ -47,5 +48,7 @@ if (parentPort) {
   } catch (reason) {
     console.log(reason);
     // cabin.error(reason);
+  } finally {
+    await prisma.$disconnect();
   }
 })();
